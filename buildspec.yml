@@ -1,6 +1,12 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
+      - kubectl version --client
 
   pre_build:
     commands:
@@ -23,6 +29,7 @@ phases:
 
       - echo Updating kubeconfig...
       - aws eks update-kubeconfig --region ap-south-1 --name gamezone
+      - aws eks get-token --cluster-name gamezone --region ap-south-1
       - aws sts get-caller-identity
       - kubectl config view
       - kubectl get nodes
