@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+
+  pre_build:
+    commands:
+      - echo Logging into Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 245246852393.dkr.ecr.ap-south-1.amazonaws.com
+
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+  build:
+    commands:
+      - echo Build started
+      - docker build -t gamezone:$IMAGE_TAG .
+
+      - docker tag gamezone:$IMAGE_TAG 245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Pushing Docker image...
+      - docker push 245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG
+
+      - echo Updating kubeconfig...
+      - aws eks update-kubeconfig --region ap-south-1 --name gamezone-cluster
+
+      - sed -i "s|IMAGE_URI|245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG|g" deployment.yaml
+
+      - kubectl apply -f deployment.yaml
+      - kubectl apply -f service.yaml
