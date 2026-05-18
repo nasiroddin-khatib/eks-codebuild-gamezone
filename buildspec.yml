@@ -25,6 +25,5 @@ phases:
       - aws eks update-kubeconfig --region ap-south-1 --name gamezone
 
       - sed -i "s|IMAGE_URI|245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG|g" deployment.yaml
-
       - kubectl apply -f deployment.yaml
       - kubectl apply -f service.yaml
