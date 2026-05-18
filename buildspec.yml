@@ -23,6 +23,9 @@ phases:
 
       - echo Updating kubeconfig...
       - aws eks update-kubeconfig --region ap-south-1 --name gamezone
+      - aws sts get-caller-identity
+      - kubectl config view
+      - kubectl get nodes
 
       - sed -i "s|IMAGE_URI|245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG|g" deployment.yml
       - kubectl apply -f deployment.yml
