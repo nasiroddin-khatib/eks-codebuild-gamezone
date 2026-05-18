@@ -1,19 +1,13 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/
-      - kubectl version --client
 
   pre_build:
     commands:
       - echo Logging into Amazon ECR...
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 245246852393.dkr.ecr.ap-south-1.amazonaws.com
 
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG="latest"
 
   build:
     commands:
@@ -27,13 +21,3 @@ phases:
       - echo Pushing Docker image...
       - docker push 245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG
 
-      - echo Updating kubeconfig...
-      - aws eks update-kubeconfig --region ap-south-1 --name gamezone
-      - aws eks get-token --cluster-name gamezone --region ap-south-1
-      - aws sts get-caller-identity
-      - kubectl config view
-      - kubectl get nodes
-
-      - sed -i "s|IMAGE_URI|245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:$IMAGE_TAG|g" deployment.yml
-      - kubectl apply -f deployment.yml
-      - kubectl apply -f service.yml

@@ -20,7 +20,8 @@ spec:
       containers:
       - name: gamezone-container
 
-        image: IMAGE_URI
+        image: 245246852393.dkr.ecr.ap-south-1.amazonaws.com/gamezone:latest
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 80
