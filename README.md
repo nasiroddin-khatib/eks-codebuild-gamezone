@@ -56,21 +56,6 @@ Browser Access
 | EC2                  | EKS worker nodes             |
 | LoadBalancer Service | Public application access    |
 
----
-
-# Project Structure
-
-```text
-.
-├── Dockerfile
-├── buildspec.yml
-├── deployment.yml
-├── service.yml
-├── aws-auth-backup.yaml
-├── index.html
-├── README.md
-└── screenshots/
-```
 
 ---
 
